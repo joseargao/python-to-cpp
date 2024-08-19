@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import time
 
 def write_jpeg_to_fifo(jpeg_path, fifo_path):
     # Open the jpeg and FIFO, then write the jpeg data into the FIFO
@@ -16,4 +17,8 @@ if __name__ == "__main__":
     if not os.path.exists(fifo_path):
         print(f"Error: FIFO {fifo_path} does not exist.")
     else:
+        start_time = time.time()
         write_jpeg_to_fifo(jpeg_path, fifo_path)
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print(f"Time taken (write): {elapsed_time:.4f} seconds")

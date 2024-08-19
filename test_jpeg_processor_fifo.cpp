@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <chrono>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -10,6 +11,8 @@ extern "C" void process_image(const unsigned char* image_data, size_t data_size)
 
 int main() {
     const char* fifo_path = "jpeg_fifo";
+    bool timing_started = false;
+    std::chrono::time_point<std::chrono::high_resolution_clock> start, end;
 
     int fd = open(fifo_path, O_RDONLY);
     if (fd == -1) {
@@ -24,6 +27,11 @@ int main() {
     ssize_t bytes_read;
 
     while ((bytes_read = read(fd, chunk, chunk_size)) > 0) {
+        if (!timing_started) {
+            // Start timing after the first successful read
+            start = std::chrono::high_resolution_clock::now();
+            timing_started = true;
+        }
         buffer.insert(buffer.end(), chunk, chunk + bytes_read);
     }
     close(fd);
@@ -36,7 +44,11 @@ int main() {
     // Process the image
     process_image(buffer.data(), buffer.size());
 
-    std::cout << "Test Complete";
+    // End timing
+    end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed_time = end - start;
+
+    std::cout << "Time taken (read): " << elapsed_time.count() << " seconds" << std::endl;
 
     return 0;
 }
