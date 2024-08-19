@@ -46,6 +46,10 @@ clean:
 	rm -f *.o *.so test_jpeg_processor test_jpeg_processor_fifo jpeg_processor_cli
 	rm -f /tmp/jpeg_fifo
 
+# Run the Python script to transfer jpeg data via ctypes
+python_ctypes: lib
+	python3 test_jpeg_processor_ctypes.py
+
 # Run the Python script to write to FIFO
 python_fifo:
 	python3 test_jpeg_processor_fifo.py
