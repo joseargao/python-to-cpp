@@ -50,8 +50,16 @@ clean:
 python_ctypes: lib
 	python3 test_jpeg_processor_ctypes.py
 
+# Check if test_jpeg_processor_fifo is already running
+check_fifo_running:
+	@if pgrep -x "test_jpeg_processor_fifo" > /dev/null; then \
+		echo "test_jpeg_processor_fifo is already running."; \
+	else \
+		$(MAKE) fifo; \
+	fi
+
 # Run the Python script to write to FIFO
-python_fifo:
+python_fifo: check_fifo_running
 	python3 test_jpeg_processor_fifo.py
 
 # Run the Python script that invokes the command line tool
